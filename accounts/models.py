@@ -1,5 +1,3 @@
-from distutils.command.upload import upload
-import profile
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -32,7 +30,7 @@ class UserManager(BaseUserManager):
         user = self.create_user(
             email = self.normalize_email(email),
             username = username,
-            passowrd = password,
+            password = password,
             first_name = first_name,
             last_name = last_name,
         )
@@ -82,6 +80,14 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    #Function for getting User Role
+    def get_role(self):
+        if self.role == 1:
+            user_role = 'Vendor'
+        elif self.role == 2:
+            user_role = 'Customer'
+        return user_role
 
 
 class UserProfile(models.Model):

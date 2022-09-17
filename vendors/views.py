@@ -5,7 +5,12 @@ from accounts.models import User, UserProfile
 from vendors.forms import vendorForm
 
 def registerRestaurant(request):
-    if request.method == 'POST':
+    # this restrict user from going to Vendor Registration Page after Logged in 
+    if request.user.is_authenticated:
+        messages.warning(request, "You are already logged in!")
+        return redirect('dashboard')
+
+    elif request.method == 'POST':
         form = UserForm(request.POST)
         v_form = vendorForm(request.POST, request.FILES)
         if form.is_valid() and v_form.is_valid():

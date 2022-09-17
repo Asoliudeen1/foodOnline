@@ -6,15 +6,11 @@ from django.dispatch import receiver
 @receiver(post_save, sender=User) # First method to connect Reciever to sender
 def post_save_create_profile_reciever(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
-    else:
-        try:
-            profile = UserProfile.objects.get(User=instance)
-            profile.save()
-        except:
-            UserProfile.objects.create(user=instance)
-        
+        user=instance
+        profile= UserProfile.objects.create(user=user)
+        profile.save()
 
+        
 @receiver(pre_save, sender=User)
 def pre_save_profile_reciever(sender, instance, **kwargs):
     pass
