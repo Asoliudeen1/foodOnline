@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from ctypes import cast
 from pathlib import Path
+from tkinter.messagebox import YES
 from decouple import config
 import os
 
@@ -153,3 +154,31 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = 'a07d092499b07d'
+EMAIL_HOST_PASSWORD = 'bcaa4c6e8cf535'
+EMAIL_PORT = '2525'
+DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
+
+
+
+#Email Configuration
+# EMAIL_HOST = config('EMAIL_HOST')
+# EMAIL_PORT = config('EMAIL_PORT', cast=int)
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_TLS = True
+
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'django.foodonline@gmail.com'
+# EMAIL_HOST_PASSWORD = 'vakqyopnwgwtfssn'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
