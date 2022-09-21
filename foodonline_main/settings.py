@@ -71,6 +71,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
+                # Context_processor Created in Accounts app
+                'accounts.context_processors.get_vendor'
             ],
         },
     },

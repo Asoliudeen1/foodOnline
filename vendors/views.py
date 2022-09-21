@@ -44,6 +44,9 @@ def registerRestaurant(request):
     return render(request, 'vendor/registervendor.html', context)
 
 
+def VendorProfile(request):
+    return render(request, 'vendor/vendor_profile.html')
+
  #Activate the User by setting the is_active status to True
 def activate(request, uidb64, token):
     try:
