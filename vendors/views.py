@@ -1,12 +1,20 @@
+
 from django. contrib import messages
-from django.shortcuts import render, redirect
-from accounts.forms import UserForm
+from django.shortcuts import get_object_or_404, render, redirect
+from accounts.forms import UserForm, UserProfileForm
 from accounts.models import User, UserProfile
 from vendors.forms import vendorForm
 from accounts.utils import  send_verification_email
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import login_required, user_passes_test
+from accounts.views import check_role_vendor
 
+from vendors.models import Vendor
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def registerRestaurant(request):
     # this restrict user from going to Vendor Registration Page after Logged in 
     if request.user.is_authenticated:
@@ -44,8 +52,33 @@ def registerRestaurant(request):
     return render(request, 'vendor/registervendor.html', context)
 
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def VendorProfile(request):
-    return render(request, 'vendor/vendor_profile.html')
+    profile = UserProfile.objects.get(user=request.user)
+    vendor = Vendor.objects.get(user=request.user)
+    #profile = get_object_or_404 (UserProfile, user=request.user)
+    #vendor = get_object_or_404 (Vendor, user=request.user)
+    if request.method == 'POST':
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        vendor_form = vendorForm(request.POST, request.FILES, instance=vendor)
+        if profile_form.is_valid() and vendor_form.is_valid():
+            profile_form.save()
+            vendor_form.save()
+            messages.success(request, 'Restaurant updated')
+            return redirect('vendor-profile')
+        else:
+            messages.success(request, 'An Error occurred during registration!')
+    
+    else:
+        profile_form = UserProfileForm(instance=profile)
+        vendor_form = vendorForm(instance=vendor)
+
+    context ={
+        'profile_form': profile_form, 'vendor_form': vendor_form, 'profile':profile, 'vendor': vendor,
+    }
+    return render(request, 'vendor/vendor_profile.html', context)
+
 
  #Activate the User by setting the is_active status to True
 def activate(request, uidb64, token):
