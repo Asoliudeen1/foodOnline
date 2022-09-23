@@ -73,7 +73,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 
                 # Context_processor Created in Accounts app
-                'accounts.context_processors.get_vendor'
+                'accounts.context_processors.get_vendor',
+                # Context_processor Created for GOOGLE API
+                'accounts.context_processors.get_google_api',
             ],
         },
     },
@@ -166,6 +168,7 @@ EMAIL_PORT = '2525'
 DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
 
 
+GOOGLE_API_KEY = 'AIzaSyAZa4beZCIi_mviBPxLBeIxAzaShzFJRhI'
 
 #Email Configuration
 # EMAIL_HOST = config('EMAIL_HOST')
@@ -180,8 +183,8 @@ DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
 
 
 # EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'django.foodonline@gmail.com'
-# EMAIL_HOST_PASSWORD = 'vakqyopnwgwtfssn'
+# EMAIL_HOST_USER = 'asoliudeen17@gmail.com'
+# EMAIL_HOST_PASSWORD = 'aksihpkfryctseqp'
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
+# DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen17@gmail.com>'
