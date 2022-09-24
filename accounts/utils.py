@@ -45,6 +45,9 @@ def send_notification(mail_subject, mail_template, context):
     
 
 
+
+
+
 # def send_password_reset_email(request, user):
 #     from_email = settings.DEFAULT_FROM_EMAIL
 #     current_site = get_current_site(request)

@@ -19,9 +19,6 @@ class Vendor(models.Model):
     def save(self, *args, **kwargs):
         if self.pk is not None:
             orig = Vendor.objects.get(pk=self.pk)
-            print("Vendor:", orig)
-            print('PK:', self.pk)
-            print('approved:', orig.is_approved)
 
             if orig.is_approved != self.is_approved:
                 mail_template = 'accounts/emails/admin_approval_email.html'
