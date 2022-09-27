@@ -162,11 +162,11 @@ MESSAGE_TAGS = {
 }
 
 
-# EMAIL_HOST = 'smtp.mailtrap.io'
-# EMAIL_HOST_USER = 'a07d092499b07d'
-# EMAIL_HOST_PASSWORD = 'bcaa4c6e8cf535'
-# EMAIL_PORT = '2525'
-# DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = 'a07d092499b07d'
+EMAIL_HOST_PASSWORD = 'bcaa4c6e8cf535'
+EMAIL_PORT = '2525'
+DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
 
 
 GOOGLE_API_KEY = 'AIzaSyAZa4beZCIi_mviBPxLBeIxAzaShzFJRhI'
@@ -178,16 +178,6 @@ GOOGLE_API_KEY = 'AIzaSyAZa4beZCIi_mviBPxLBeIxAzaShzFJRhI'
 # EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')
 # EMAIL_USE_TLS = True
 
-
-
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'asoliudeen1@gmail.com'
-EMAIL_HOST_PASSWORD = 'uowomexaomhyyzsh'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen17@gmail.com>'
 
 
 

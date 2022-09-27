@@ -33,6 +33,9 @@ class FoodItem(models.Model):
     is_available = models.BooleanField (default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+    
+    def clean(self):
+        self.food_title = self.food_title.capitalize()
 
     def __str__(self):
         return self.food_title

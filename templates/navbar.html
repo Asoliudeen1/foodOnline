@@ -39,9 +39,8 @@
 								{% else %}
 									<span><a class="cs-color cs-popup-joinus-btn login-popup" data-target="#sign-in"  href="{% url 'login' %}">Login </a> </span>
 									<span><a class="cs-color cs-popup-joinus-btn login-popup" data-target="#sign-in" href="{% url 'registeruser' %}">Register</a></span> 
-									<a class="get-start-btn" href="{% url 'registervendor' %}">
-									Register
-									Restaurant </a>
+									
+									<a href="{% url 'registervendor' %}" class="get-start-btn">Register Restaurant </a>
 								{% endif %}
 							
 							</div>

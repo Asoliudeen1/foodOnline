@@ -1,10 +1,8 @@
-from multiprocessing import context
-from unicodedata import category
 from django. contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from accounts.forms import UserForm, UserProfileForm
 from accounts.models import User, UserProfile
-from menu.models import Category
+from menu.models import Category, FoodItem
 from vendors.forms import vendorForm
 from accounts.utils import  send_verification_email
 from .utils import get_vendor
@@ -13,21 +11,21 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.views import check_role_vendor
 from vendors.models import Vendor
-from menu.forms import CategoryForm
+from menu.forms import CategoryForm, FooditemForm
 from django.template.defaultfilters import slugify
 
 
 
 
-@login_required(login_url='login')
-@user_passes_test(check_role_vendor)
+
 def registerRestaurant(request):
     # this restrict user from going to Vendor Registration Page after Logged in 
     if request.user.is_authenticated:
         messages.warning(request, "You are already logged in!")
         return redirect('dashboard')
 
-    elif request.method == 'POST':
+   
+    if request.method == "POST":
         form = UserForm(request.POST)
         v_form = vendorForm(request.POST, request.FILES)
         if form.is_valid() and v_form.is_valid():
@@ -47,6 +45,8 @@ def registerRestaurant(request):
             send_verification_email(request, user, mail_subject, email_template)   #send_verification_email is function created in utils.py
             messages.success(request, "Your Account has been Registered Successfully, Please Wait for Approval")
             return redirect('registervendor') 
+        else:
+            messages.error(request, 'An Error occurred during registration!')
     
     else:
         form = UserForm()
@@ -67,12 +67,12 @@ def VendorProfile(request):
     # vendor = request.user.user
     # profile = vendor.user_profile
     
-    profile = UserProfile.objects.get(user=request.user)
-    vendor = Vendor.objects.get(user=request.user)
+   # profile = UserProfile.objects.get(user=request.user)
+    #vendor = Vendor.objects.get(user=request.user)
     
 
-    #profile = get_object_or_404 (UserProfile, user=request.user)
-    #vendor = get_object_or_404 (Vendor, user=request.user)
+    profile = get_object_or_404 (UserProfile, user=request.user)
+    vendor = get_object_or_404 (Vendor, user=request.user)
     
     if request.method == 'POST':
         profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
@@ -83,7 +83,7 @@ def VendorProfile(request):
             messages.success(request, 'Restaurant updated')
             return redirect('vendor-profile')
         else:
-            messages.success(request, 'An Error occurred during registration!')
+            messages.error(request, 'An Error occurred during registration!')
     
     else:
         profile_form = UserProfileForm(instance=profile)
@@ -112,12 +112,13 @@ def activate(request, uidb64, token):
         messages.error(request, 'Invalid Activation link')
     return
 
+
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def MenuBuilder(request):
     vendor = get_vendor(request)
-    categories = vendor.category_set.all().order_by('created_at')
-     # categories = Category.objects.filter(vendor=vendor)
+    #categories = vendor.category_set.all().order_by('created_at')
+    categories = Category.objects.filter(vendor=vendor).order_by('created_at')
     context = {'categories': categories}
     return render(request, 'vendor/menu_builder.html', context)
 
@@ -142,6 +143,8 @@ def fooditems_by_category(request, pk):
     return render (request, 'vendor/fooditems_by_category.html', context)
 
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def AddCategory(request):
     if request.method == 'POST':
         category_form = CategoryForm(request.POST)
@@ -164,6 +167,8 @@ def AddCategory(request):
     return render(request, 'vendor/add-category.html', context)
 
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def EditCategory(request, pk):
     category = Category.objects.get(id=pk)
     if request.method == 'POST':
@@ -173,7 +178,7 @@ def EditCategory(request, pk):
             category = category_form.save(commit=False)
             category.vendor = get_vendor(request)
             category.slug = slugify(category_name)
-            category_form.save()
+            category.save()
             messages.success(request, 'Category updated successfully')
             return redirect('menu-builder')
         else: 
@@ -188,8 +193,74 @@ def EditCategory(request, pk):
     return render (request, 'vendor/edit-category.html', context)
 
 
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def DeleteCategory(request, pk):
     category = Category.objects.get(id=pk)
     category.delete()
     messages.success(request, 'Category has been deleted successfully')
     return redirect('menu-builder')
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def Addfooditem(request):
+    if request.method == 'POST':
+        form = FooditemForm(request.POST, request.FILES)
+        if form.is_valid():
+            food_title = form.cleaned_data['food_title']
+            fooditem = form.save(commit=False)
+            fooditem.Vendor = get_vendor(request)
+            fooditem.slug = slugify(food_title)
+            fooditem.save()
+            messages.success(request, 'Food added successfully')
+            return redirect('fooditems_by_category', fooditem.category.id)
+        else:
+            messages.error(request, 'Data already exist')
+    else:
+        form = FooditemForm()
+
+        # modify form so as to select Category of current User
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
+    context ={'form': form,}
+    return render(request, 'vendor/add-fooditem.html', context)
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def Editfooditem(request, pk):
+    fooditem = FoodItem.objects.get(id=pk)
+    #fooditem = get_object_or_404(FoodItem, id=pk)
+   
+ 
+    if request.method == 'POST':
+        form = FooditemForm (request.POST, request.FILES, instance=fooditem)
+        if form.is_valid():
+            food_title = form.cleaned_data['food_title']
+            fooditem = form.save(commit=False)
+            fooditem.vendor = get_vendor(request)
+            fooditem.slug = slugify(food_title)
+            fooditem.save()
+            messages.success(request, 'Category updated successfully')
+            return redirect('fooditems_by_category', fooditem.category.id)
+        else:
+            messages.error(request, 'An Error occurred during registration!')
+    else:
+         form = FooditemForm(instance=fooditem)
+         
+        # modify form so as to select Category of current User
+         form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
+    context = {
+        'form' : form,
+        'fooditem': fooditem,
+    }
+    return render(request, 'vendor/edit-fooditem.html', context)
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def Deletefooditem(request, pk):
+    food = FoodItem.objects.get(id=pk)
+    food.delete()
+    messages.success(request, 'Food has been deleted successfully')
+    return redirect('fooditems_by_category', food.category.id)
