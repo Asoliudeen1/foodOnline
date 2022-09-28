@@ -1,3 +1,5 @@
+
+from urllib import request
 from django. contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from accounts.forms import UserForm, UserProfileForm
@@ -19,23 +21,32 @@ from django.template.defaultfilters import slugify
 
 
 def registerRestaurant(request):
-    # this restrict user from going to Vendor Registration Page after Logged in 
+     # this restrict user from going to Vendor Registration Page after Logged in 
     if request.user.is_authenticated:
         messages.warning(request, "You are already logged in!")
-        return redirect('dashboard')
+        return redirect('vendordashboard')
 
-   
-    if request.method == "POST":
+    
+    v_form = vendorForm((request.POST, request.FILES) or None)    
+    form = UserForm((request.POST, request.FILES) or None)
+    if request.method == 'POST':
+        #store the data and create the User
         form = UserForm(request.POST)
         v_form = vendorForm(request.POST, request.FILES)
-        if form.is_valid() and v_form.is_valid():
-            password = form.cleaned_data['password'] # clean_data will return 'dict value'
-            user = form.save(commit=False)
-            user.set_password(password)
+        if form.is_valid() and v_form.is_valid:
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            vendor_name = v_form.cleaned_data['vendor_name']
+            user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
+          
             user.role = User.VENDOR
             user.save()
             vendor = v_form.save(commit=False)
             vendor.user = user
+            vendor.vendor_slug = slugify(vendor_name) + '' + str(user.id)
             user_profile = UserProfile.objects.get(user=user)
             vendor.user_profile = user_profile
             vendor.save()
@@ -126,14 +137,12 @@ def MenuBuilder(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def fooditems_by_category(request, pk):
-    
     vendor = get_vendor(request)
-    category = vendor.category_set.get(id=pk)
-    fooditems = category.fooditem_set.all()
+    category = get_object_or_404 (Category, id=pk)
+    fooditems = FoodItem.objects.filter(Vendor=vendor, category=category)
     
     # vendor = Vendor.objects.get(user=request.user)
-    # category = get_object_or_404 (Category, id=pk)
-    # fooditems = FoodItem.objects.filter(Vendor=vendor, category=category)
+    
     
     context = {
         'fooditems': fooditems,
@@ -229,8 +238,8 @@ def Addfooditem(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def Editfooditem(request, pk):
-    fooditem = FoodItem.objects.get(id=pk)
-    #fooditem = get_object_or_404(FoodItem, id=pk)
+    #fooditem = FoodItem.objects.get(id=pk)
+    fooditem = get_object_or_404(FoodItem, id=pk)
    
  
     if request.method == 'POST':
@@ -247,7 +256,7 @@ def Editfooditem(request, pk):
             messages.error(request, 'An Error occurred during registration!')
     else:
          form = FooditemForm(instance=fooditem)
-         
+
         # modify form so as to select Category of current User
          form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
     context = {
