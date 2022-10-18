@@ -26,22 +26,13 @@ def registerRestaurant(request):
         messages.warning(request, "You are already logged in!")
         return redirect('vendordashboard')
 
-    
-    v_form = vendorForm((request.POST, request.FILES) or None)    
-    form = UserForm((request.POST, request.FILES) or None)
+
     if request.method == 'POST':
-        #store the data and create the User
         form = UserForm(request.POST)
         v_form = vendorForm(request.POST, request.FILES)
-        if form.is_valid() and v_form.is_valid:
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+        if form.is_valid() and v_form.is_valid():
             vendor_name = v_form.cleaned_data['vendor_name']
-            user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
-          
+            user = form.save(commit=False)
             user.role = User.VENDOR
             user.save()
             vendor = v_form.save(commit=False)
@@ -72,16 +63,7 @@ def registerRestaurant(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def VendorProfile(request):
-    # Note: im using different methods to put my skills into practice
-
-        # first method to get current vendor and profile or current user
-    # vendor = request.user.user
-    # profile = vendor.user_profile
     
-   # profile = UserProfile.objects.get(user=request.user)
-    #vendor = Vendor.objects.get(user=request.user)
-    
-
     profile = get_object_or_404 (UserProfile, user=request.user)
     vendor = get_object_or_404 (Vendor, user=request.user)
     
@@ -141,9 +123,6 @@ def fooditems_by_category(request, pk):
     category = get_object_or_404 (Category, id=pk)
     fooditems = FoodItem.objects.filter(Vendor=vendor, category=category)
     
-    # vendor = Vendor.objects.get(user=request.user)
-    
-    
     context = {
         'fooditems': fooditems,
         'category': category,
@@ -155,14 +134,20 @@ def fooditems_by_category(request, pk):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def AddCategory(request):
+    venddor = get_vendor(request)
     if request.method == 'POST':
         category_form = CategoryForm(request.POST)
-        if category_form.is_valid():
+        category_name = request.POST['category_name']
+        if Category.objects.filter(category_name=category_name).exists():
+            messages.error(request, 'Category name already exist')
+            return redirect('add-category')
+        elif category_form.is_valid():
             category_name = category_form.cleaned_data['category_name']
             category = category_form.save(commit=False)
             category.vendor = get_vendor(request)
-            category.slug = slugify(category_name)
-            category_form.save()
+            category.save()
+            category.slug = slugify(category_name)+'-'+str(category.id)
+            category.save()
             messages.success(request, 'Category added successfully')
             return redirect('menu-builder')
         else: 

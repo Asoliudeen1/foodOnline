@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'menu.apps.MenuConfig',
     'vendors.apps.VendorsConfig',
     'marketplace.apps.MarketplaceConfig',
+    'django.contrib.gis',
 ]
 
 MIDDLEWARE = [
@@ -94,7 +95,8 @@ WSGI_APPLICATION = 'foodonline_main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
@@ -102,7 +104,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'accounts.User'  # Telling Django to Use Our Custom User
+AUTH_USER_MODEL = 'accounts.User'  # Telling Django to Use Our Custom User Model
 
 
 # Password validation
@@ -169,11 +171,12 @@ MESSAGE_TAGS = {
 EMAIL_HOST = 'smtp.mailtrap.io'
 EMAIL_HOST_USER = 'a07d092499b07d'
 EMAIL_HOST_PASSWORD = 'bcaa4c6e8cf535'
-EMAIL_PORT = '2525'
+EMAIL_PORT = '465'
 DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
 
 
 GOOGLE_API_KEY = 'AIzaSyAZa4beZCIi_mviBPxLBeIxAzaShzFJRhI'
+
 
 #Email Configuration
 # EMAIL_HOST = config('EMAIL_HOST')
@@ -183,5 +186,6 @@ GOOGLE_API_KEY = 'AIzaSyAZa4beZCIi_mviBPxLBeIxAzaShzFJRhI'
 # EMAIL_USE_TLS = True
 
 
-
+# GDAL_LIBRARY_PATH = "/opt/homebrew/Cellar/gdal/3.3.2_3/lib/libgdal.dylib"
+# GEOS_LIBRARY_PATH = "/opt/homebrew/Cellar/geos/3.9.1/lib/libgeos_c.dylib"
 

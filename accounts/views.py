@@ -32,7 +32,6 @@ def check_role_customer(user):
 
 
 def registerUser(request):
-     # this code restrict user from going to Customer Registration Page after Logged in
     if request.user.is_authenticated:
         messages.warning(request, "You are already logged in!")
         return redirect('myaccount')
@@ -40,7 +39,6 @@ def registerUser(request):
     elif request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
-            # One of Methods to Handling User Data or Form Data (Creation of user Using Form)
             password = form.cleaned_data['password'] # clean_data will return 'dict value'
             user = form.save(commit=False)
             user.set_password(password)
@@ -52,16 +50,6 @@ def registerUser(request):
             email_template = 'accounts/emails/account_verification_email.html'
             send_verification_email(request, user, mail_subject, email_template)  #send_verification_email is function created in utils.py
             messages.success(request, "Your Account has been Registered Successfully")
-
-            # Second Method to Handling User Data or Form Data (Creation of user Using Create_User Method)
-            #first_name = form.cleaned_data['first_name']
-            #last_name = form.cleaned_data['last_name']
-            #username = form.cleaned_data['username']
-            #email = form.cleaned_data['email']
-            #password = form.cleaned_data['password']
-            #user = User.objects.create_user(first_name = first_name, last_name = last_name, username = username, email = email, password = password)
-            #user.role = User.CUSTOMER
-            #user.save()
 
             return redirect ('registeruser')
         else:

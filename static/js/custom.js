@@ -1,5 +1,6 @@
 let autocomplete;
 
+
 function initAutoComplete(){
 autocomplete = new google.maps.places.Autocomplete(
     document.getElementById('id_address'),
@@ -7,13 +8,18 @@ autocomplete = new google.maps.places.Autocomplete(
         types: ['geocode', 'establishment'],
         //default in this app is "IN" - add your country code
         componentRestrictions: {'country': ['NG']},
-    })
-// function to specify what should happen when the prediction is clicked
+    });
+   // id_address.focus(); 
+
+
+// When the user selects an address from the drop-down, populate the
+// address fields in the form.
 autocomplete.addListener('place_changed', onPlaceChanged);
 }
 
+
 function onPlaceChanged (){
-    var place = autocomplete.getPlace();
+    const place = autocomplete.getPlace();
 
     // User did not select the prediction. Reset the input field or alert()
     if (!place.geometry){
@@ -22,7 +28,9 @@ function onPlaceChanged (){
     else{
         // console.log('place name=>', place.name)
     }
-
+    
+    
+    // get the address components and assign them to the fields
     var geocoder = new google.maps.Geocoder();
     var address = document.getElementById('id_address').value;
 
@@ -42,6 +50,7 @@ function onPlaceChanged (){
     });
 
     // loop through the address components and assign other address data
+    // console.log(place.address_components);
     for(var i=0; i<place.address_components.length; i++){
         for(var j=0; j<place.address_components[i].types.length; j++){
             
@@ -92,12 +101,13 @@ $(document).ready(function(){
                     swal(response.message, '', 'info').then(function(){
                         window.location = '/login';
                     })
-                }if(response.status == 'failed'){ 
+                }else if(response.status == 'failed'){ 
                     swal(response.message, '', 'error')
                 }else{
                     $('#cart_counter').html(response.cart_counter['cart_count']);
                     $('#qty-'+food_id).html(response.qty);
 
+                    // subtotal, tax and grand total
                     applyCartamounts(
                         response.cart_amount['subtotal'],
                         response.cart_amount['tax'],
@@ -129,7 +139,7 @@ $(document).ready(function(){
             type: 'GET',
             url: url,
             success: function(response){
-                console.log(response);
+                // console.log(response);
                 if(response.status == 'login_required'){
                     swal(response.message, '', 'info').then(function(){
                         window.location = '/login';
@@ -149,14 +159,11 @@ $(document).ready(function(){
                     if(window.location.pathname == '/cart/'){
                         removeCartItem(response.qty, cart_id);
                         checkEmptyCart();
-                    }
-                    
-                }
-
-               
-                }
-            })
+                    }   
+                }   
+            }
         })
+    })
 
 
     // DELETE CART ITEM
@@ -185,9 +192,7 @@ $(document).ready(function(){
                     )
 
                     removeCartItem(0, cart_id);
-                    checkEmptyCart();
-                
-             
+                    checkEmptyCart();           
                 }   
             }
         })
@@ -198,7 +203,8 @@ $(document).ready(function(){
             if(cartItemQty <= 0){
                 // Remove the Cart item element
                 document.getElementById("cart-item-"+cart_id).remove()
-        }
+            }
+    
     }
 
 

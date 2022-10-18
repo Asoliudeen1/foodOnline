@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+from django.contrib.gis.db import models as gismodels
+from django.contrib.gis.geos import Point
 
 
 #Custom users 
@@ -20,7 +21,7 @@ class UserManager(BaseUserManager):
             first_name = first_name,
             last_name = last_name,    
         )
-        user.set_password(password) #set_password method will encode (SHA 256) the password and store in DB
+        user.set_password(password) 
         user.save(using=self._db)
         return user
 
@@ -61,7 +62,7 @@ class User(AbstractBaseUser):
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
@@ -101,15 +102,23 @@ class UserProfile(models.Model):
     pin_code = models.CharField(max_length=6, blank=True, null=True)
     latitude = models.CharField(max_length=20, blank=True, null=True)
     longitude = models.CharField(max_length=20, blank=True, null=True)
+    location = gismodels.PointField(blank=True, null=True, srid=4326)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now_add=True)
 
-
-    # # Concatenate Address 1 and Address 2
-    # def full_address(self):
-    #     return f'{self.address_line_1}, {self.address_line_2}'
         
 
     def __str__(self):
         return self.user.email
 
+    def save(self, *args, **kwargs):
+        if self.latitude and self.longitude:
+            self.location = Point(float(self.longitude), float(self.latitude))
+            return super(UserProfile, self).save(*args, **kwargs)
+        return super(UserProfile, self).save(*args, **kwargs)
+
+
+
+ # # Concatenate Address 1 and Address 2
+    # def full_address(self):
+    #     return f'{self.address_line_1}, {self.address_line_2}'

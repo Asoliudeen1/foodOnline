@@ -5,8 +5,8 @@ from django.contrib.auth.admin import UserAdmin
 #used to make Password Read Only
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'first_name', 'last_name', 
-    'username', 'role', 'is_active')  # used to specify the fields to display on Admin page
-    ordering = ('-date_joined',) #note u must end a tuple of 1 element with (comma),
+    'username', 'role', 'is_active') 
+    ordering = ('-date_joined',)
     filter_horizontal=()
     list_filter = ()
     fieldsets = ()
