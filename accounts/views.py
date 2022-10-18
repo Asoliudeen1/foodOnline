@@ -89,6 +89,8 @@ def Login(request):
             return redirect('login')
     return render (request, 'accounts/login.html')
 
+
+@login_required(login_url='login')
 def LogOut(request):
     logout(request)
     messages.info(request, 'You are Successfully Logout')
