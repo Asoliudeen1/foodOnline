@@ -4,8 +4,10 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from marketplace.context_processors import get_cart_counter, get_cat_amount
 from menu.models import Category, FoodItem
-from vendors.models import Vendor
+from vendors.models import Vendor, OpeningHour
 from django.db.models import Prefetch
+from datetime import date, datetime
+
 from .models import Cart
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -35,17 +37,41 @@ def VendorDetail(request, vendor_slug):
         )
     )
     
+    # opening_hours = OpeningHour.objects.filter(vendor=vendor).order_by('day', '-from_hour')
+
+    opening_hours = vendor.openinghour_set.all().order_by('day', '-from_hour')
+    
+    # CHECK CURRENT DAY's OPENING HOURS
+    today_date = date.today()
+    today = today_date.isoweekday() # It will return (1 TO 7)
+
+    current_opening_hours = OpeningHour.objects.filter(vendor=vendor, day=today)
+    
+    # now = datetime.now()
+    # current_time = now.strftime("%H:%M:%S")
+
+    # # CHECK CURRENT OPENING Time
+    # is_open = None
+    # for i in current_opening_hours:
+    #     start = str(datetime.strptime(i.from_hour, "%I:%M %p").time())
+    #     end = str(datetime.strptime(i.to_hour, "%I:%M %p").time())
+    #     if current_time > start and current_time < end:
+    #         is_open = True
+    #         break
+    #     else:
+    #         is_open = False
 
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
     else:
         cart_items = None
-    print(request.GET)
+
     context = {
         'vendor': vendor,
         'categories': categories,
         'cart_items': cart_items,
-      
+        'opening_hours': opening_hours,
+        'current_opening_hours': current_opening_hours,
     }
     return render(request, 'marketplace/vendor_detail.html', context)
 

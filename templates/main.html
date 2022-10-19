@@ -38,9 +38,9 @@
 
 	
 	<!-- Google API -->
-
-	<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&libraries=places&callback=initAutoComplete" defer></script>
-
+	{% if '/' == request.path or 'profile' in request.path %}
+		<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&libraries=places&callback=initAutoComplete" defer></script>
+	{% endif %}
 
 	<style>
 		body, .main-section p, .mce-content-body p{

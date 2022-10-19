@@ -21,4 +21,11 @@ path('menu-builder/category/delete/<int:pk>/', views.DeleteCategory, name='delet
 path('menu-builder/food/add/', views.Addfooditem, name='add-fooditem'),
 path('menu-builder/food/edit/<int:pk>/', views.Editfooditem, name='edit-fooditem'),
 path('menu-builder/food/delete/<int:pk>/', views.Deletefooditem, name='delete-fooditem'),
+
+# OPENING HOURS CRUD
+path('opening-hours/', views.openingHours, name='opening-hours'),
+path('opening-hours/add/', views.openingHoursAdd, name='opening-hours-add'),
+path('opening-hours/edit/<int:pk>/', views.openingHoursEdit, name='opening-hours'),
+path('opening-hours/remove/<int:pk>/', views.removeopeningHours, name='remove-opening-hours'),
+
 ]
