@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'marketplace.apps.MarketplaceConfig',
     'django.contrib.gis',
     'django.contrib.humanize',
+    'customers.apps.CustomersConfig',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,7 @@ TEMPLATES = [
                 
                 # Context_processor Created in Accounts app
                 'accounts.context_processors.get_vendor',
+                'accounts.context_processors.get_user_profile',
                 # Context_processor Created for GOOGLE API
                 'accounts.context_processors.get_google_api',
                 # Cart Counter

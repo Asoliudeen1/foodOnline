@@ -1,6 +1,3 @@
-from dataclasses import fields
-from distutils.command.clean import clean
-from pyexpat import model
 from wsgiref.validate import validator
 from django import forms
 from .models import User, UserProfile
@@ -47,3 +44,4 @@ class UserProfileForm(forms.ModelForm):
         for field in self.fields:
             if field == 'latitude' or field == 'longitude':
                 self.fields[field].widget.attrs['readonly'] = 'readonly'
+
