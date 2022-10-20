@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load humanize %}
 {% load static %}
 {% block content %}
 
@@ -36,7 +37,7 @@
                                                     <a href="{% url 'vendordetail' item.fooditem.Vendor.vendor_slug %}" class="badge badge-warning">{{item.fooditem.Vendor}}</a>
                                                 </div>
                                                 <div class="price-holder">
-                                                    <span class="price">#{{item.fooditem.price}}</span>
+                                                    <span class="price"><strong>#<em>{{item.fooditem.price|intcomma}}</em></strong></span>
 
                                                     <a href="#" class="decrease_cart" data-id="{{item.fooditem.id}}" id="{{item.id}}" data-url="{% url 'decreasecart' item.fooditem.id %}" style="margin-right: 28px;"><i class="icon-minus text-color"></i></a>
                                                     <label id="qty-{{item.fooditem.id}}">0</label>
@@ -80,24 +81,28 @@
                                         <li style="list-style-type: none;">
                                             Subtotal
                                             <span class="price float-right">
-                                                <span class="currency">$</span>
-                                                <span id="subtotal">{{subtotal}}</span>
+                                                <span class="currency">#</span>
+                                                <span id="subtotal">{{subtotal|intcomma}}</span>
                                             </span>
                                         </li>
                                         
-                                        <li style="list-style-type: none;">
-                                            tax
-                                            <span class="price float-right">
-                                                <span class="currency">$</span>
-                                                <span id="tax">{{tax}}</span>
-                                            </span>
-                                        </li>
+                                        {% for key, value in tax_dict.items %}
+                                            {% for i, j in value.items %}
+                                                <li style="list-style-type: none;">
+                                                    {{key}} <span>({{i}}%)</span>
+                                                    <span class="price float-right">
+                                                        <span class="currency">#</span>
+                                                        <span id="tax-{{ key }}">{{j|intcomma}}</span>
+                                                    </span>
+                                                </li>
+                                            {% endfor %}
+                                        {% endfor %}
 
                                         <l style="list-style-type: none; font-weight: 600;">
                                             TOTAL
                                             <span class="price float-right">
-                                                <span class="currency">$</span>
-                                                <span id="total">{{grand_total}}</span>
+                                                <span class="currency">#</span>
+                                                <span id="total">{{grand_total|intcomma}}</span>
                                             </span>
                                         </li>
                                     </ul>

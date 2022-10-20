@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'vendors.apps.VendorsConfig',
     'marketplace.apps.MarketplaceConfig',
     'django.contrib.gis',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
