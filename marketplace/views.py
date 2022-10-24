@@ -2,8 +2,10 @@
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
+from accounts.models import UserProfile
 from marketplace.context_processors import get_cart_counter, get_cat_amount
 from menu.models import Category, FoodItem
+from orders.forms import OrderForm
 from vendors.models import Vendor, OpeningHour
 from django.db.models import Prefetch
 from datetime import date, datetime
@@ -26,6 +28,7 @@ def MarketPlace(request):
         'vendor_count': vendor_count,
     }
     return render(request, 'marketplace/marketplace.html', context)
+
 
 def VendorDetail(request, vendor_slug):
     vendor = get_object_or_404(Vendor, vendor_slug=vendor_slug)
@@ -77,6 +80,7 @@ def VendorDetail(request, vendor_slug):
 
 
 #INCREASE CART
+@login_required(login_url ='login')
 def AddToCart(request, food_id):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -103,6 +107,7 @@ def AddToCart(request, food_id):
 
 
 # DECREASE CART
+@login_required(login_url ='login')
 def DecreaseCart(request, food_id):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -132,7 +137,8 @@ def DecreaseCart(request, food_id):
     else:
         return JsonResponse({'status': 'login_required', 'message': 'Please login to continue'})
 
-@login_required(login_url ='login')
+
+
 def cart(request):
     cart_items = Cart.objects.filter(user=request.user).order_by('created_at')
     context = {
@@ -141,6 +147,7 @@ def cart(request):
     return render(request, 'marketplace/cart.html', context)
 
 
+@login_required(login_url ='login')
 def DeleteCart(request, cart_id):
     if request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -193,5 +200,35 @@ def search(request):
     }
     
     return render(request, 'marketplace/marketplace.html', context)
+
+
+@login_required(login_url ='login')
+def checkout(request):
+    cart_items = Cart.objects.filter(user=request.user).order_by('created_at')
+    cart_count = cart_items.count()
+
+    if cart_count <= 0:
+        return redirect('marketplace')
+
+
+    user_profile = UserProfile.objects.get(user=request.user)
+    deafult_values = {
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'phone': request.user.phone_number,
+        'email': request.user.email,
+        'address': user_profile.address,
+        'country': user_profile.country,
+        'state': user_profile.state,
+        'city': user_profile.city,
+        'pin_code': user_profile.pin_code,
+    }
+
+    form = OrderForm(initial=deafult_values)
+    context = {
+        'form': form,
+        'cart_items':cart_items,
+    }
+    return render(request, 'marketplace/checkout.html', context)
 
 

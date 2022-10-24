@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from ctypes import cast
+
 from pathlib import Path
-from tkinter.messagebox import YES
 from decouple import config
 import os
 
@@ -49,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django.contrib.humanize',
     'customers.apps.CustomersConfig',
+    'orders.apps.OrdersConfig',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +76,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                
                 # Context_processor Created in Accounts app
                 'accounts.context_processors.get_vendor',
                 'accounts.context_processors.get_user_profile',
@@ -85,6 +84,8 @@ TEMPLATES = [
                 # Cart Counter
                 'marketplace.context_processors.get_cart_counter',
                 'marketplace.context_processors.get_cat_amount',
+                # Paypal client id
+                'accounts.context_processors.get_paypal_client_id',
             ],
         },
     },
@@ -171,24 +172,21 @@ MESSAGE_TAGS = {
 }
 
 
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = 'a07d092499b07d'
-EMAIL_HOST_PASSWORD = 'bcaa4c6e8cf535'
-EMAIL_PORT = '465'
-DEFAULT_FROM_EMAIL = 'foodOnline Marketplace <asoliudeen1@gmail.com>'
 
 
-GOOGLE_API_KEY = 'AIzaSyAZa4beZCIi_mviBPxLBeIxAzaShzFJRhI'
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
 
 
 #Email Configuration
-# EMAIL_HOST = config('EMAIL_HOST')
-# EMAIL_PORT = config('EMAIL_PORT', cast=int)
-# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')
-# EMAIL_USE_TLS = True
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD= config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
 
 
-# GDAL_LIBRARY_PATH = "/opt/homebrew/Cellar/gdal/3.3.2_3/lib/libgdal.dylib"
-# GEOS_LIBRARY_PATH = "/opt/homebrew/Cellar/geos/3.9.1/lib/libgeos_c.dylib"
+PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY ='same-origin-allow-popups'
+
 
