@@ -199,13 +199,12 @@
             },
             success: function(response){
                 console.log('response=>', response)
-                window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id'+response.transaction_id
+                console.log('transaction Id=>', response.transaction_id)
+                console.log('Ordered no=>', response.order_number)
+                window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
             }
         })
     }
-
-
-
 
 </script>
 {% endblock content %}

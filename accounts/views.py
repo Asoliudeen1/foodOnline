@@ -2,6 +2,7 @@ from multiprocessing import context
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render, redirect
+from orders.models import Order
 
 from vendors.models import Vendor
 from .utils import detectUser, send_verification_email
@@ -107,7 +108,16 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)
 def custDashboard(request):
-    return render (request, 'accounts/custdashboard.html')
+    orders = Order.objects.filter(user=request.user, is_ordered=True)
+    recent_orders = orders[:5]
+    order_count = orders.count
+    context ={
+        'orders': orders,
+        'order_count': order_count,
+        'recent_orders': recent_orders
+    }
+    return render (request, 'accounts/custdashboard.html', context)
+
 
 
 @login_required(login_url='login')

@@ -190,3 +190,6 @@ PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
 SECURE_CROSS_ORIGIN_OPENER_POLICY ='same-origin-allow-popups'
 
 
+PASSWORD_RESET_TIMEOUT = 259200 # 3 days, in seconds
+
+
