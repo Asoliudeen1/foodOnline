@@ -28,4 +28,8 @@ path('opening-hours/add/', views.openingHoursAdd, name='opening-hours-add'),
 path('opening-hours/edit/<int:pk>/', views.openingHoursEdit, name='opening-hours'),
 path('opening-hours/remove/<int:pk>/', views.removeopeningHours, name='remove-opening-hours'),
 
+path('order_detail/<int:order_number>/', views.OrderDetail, name='order-detail'),
+
+path('my_orders/', views.my_orders, name='vendor_my_orders'),
+
 ]
