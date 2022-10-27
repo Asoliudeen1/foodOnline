@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 from django.db import models
 from accounts.models import User
 from menu.models import FoodItem
