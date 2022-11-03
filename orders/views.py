@@ -190,16 +190,12 @@ def Payments(request):
 def OrderComplete(request):
     order_number = request.GET.get('order_no')
     transaction_id = request.GET.get('trans_id')
-    print(transaction_id)
-    print(order_number)
+    
 
     try:
         order = Order.objects.get(order_number=order_number, payment__transaction_id=transaction_id, is_ordered=True)
         ordered_food = OrderedFood.objects.filter(order=order)
-        
-        print(order)
-        print(ordered_food)
-
+    
         subtotal = 0
         for item in ordered_food:
             subtotal += (item.price * item.quantity)

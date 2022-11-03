@@ -138,11 +138,8 @@ def AddCategory(request):
     venddor = get_vendor(request)
     if request.method == 'POST':
         category_form = CategoryForm(request.POST)
-        category_name = request.POST['category_name']
-        if Category.objects.filter(category_name=category_name).exists():
-            messages.error(request, 'Category name already exist')
-            return redirect('add-category')
-        elif category_form.is_valid():
+        #if Category.objects.filter(category_name__iexact=category_name).exists():
+        if category_form.is_valid():
             category_name = category_form.cleaned_data['category_name']
             category = category_form.save(commit=False)
             category.vendor = get_vendor(request)

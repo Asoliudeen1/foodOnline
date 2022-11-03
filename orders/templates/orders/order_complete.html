@@ -1,5 +1,5 @@
 {% extends 'main.html' %}
-{% loadstatic %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5 mb-5">
@@ -64,7 +64,7 @@
                                 Subtotal
                                 <span class="price float-right">
                                     <span class="currency">$</span>
-                                    <span id="subtotal">{{subtotal|intcomma}}</span>
+                                    <span id="subtotal">{{subtotal}}</span>
                                 </span>
                             </li>
                             
@@ -74,7 +74,7 @@
                                         {{key}} <span>({{i}}%)</span>
                                         <span class="price float-right">
                                             <span class="currency">$</span>
-                                            <span id="tax-{{ key }}">{{j|intcomma}}</span>
+                                            <span id="tax-{{ key }}">{{j}}</span>
                                         </span>
                                     </li>
                                 {% endfor %}
